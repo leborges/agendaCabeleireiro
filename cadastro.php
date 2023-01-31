@@ -72,7 +72,7 @@
 			if ($senha != $senhaC) {
 				echo "Senha diferentes!";
 			} else if($senha == "") {
-				echo "Campo de senha vazio.";
+				echo "Campo de senha vazio";
 			} else {
 				$nome = $_POST['tnome'];
 				$cpf = $_POST['tcpf'];
