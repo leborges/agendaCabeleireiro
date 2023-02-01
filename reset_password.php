@@ -39,7 +39,7 @@
 				<button type="submit" name="submit">Confirmar</button>
 
 			</form>
-				
+			<pre>
 			<?php
 				$cpf = $_POST['tcpf']??"";
 				$pass1 = $_POST['tpass1']??"";
@@ -47,34 +47,39 @@
 
 				if (isset($_POST['submit'])) {
 				
-					$sql = "SELECT cpf FROM usuarios";
+					$query = "SELECT * FROM usuarios";
 					
-					if ($conn->query($sql) == TRUE) {
+					if ($conn->query($query) == TRUE) {
 						
-						$result = $conn->query($sql);
-						$row = $result->fetch_assoc();	
+						$result = $conn->query($query);
+						$row = mysqli_num_rows($result);
 						
-						if ($pass1 == $pass2 AND $cpf == $row["cpf"]) {
-							
-							$pass1 = md5($pass1);
-							
-							$sql = "UPDATE usuarios SET senha = $pass1 WHERE cpf = $cpf";
-							echo "$cpf e $pass1";
-							if ($conn->query($sql) == TRUE) {
-								echo "Senha alterada";
-							} else {
-								echo "Error".$sql."<br>".$conn->error;
+						while ($row = $result->fetch_assoc()) {
+							if ($pass1 == $pass2 AND $cpf == $row["cpf"]) {
+								
+								$pass1 = "'".md5($pass1)."'";
+								$cpf = "'".$cpf."'";
+								$sql = "UPDATE usuarios SET senha = $pass1 WHERE cpf = $cpf";
+
+								
+								if ($conn->query($sql) == TRUE) {
+									echo "<meta http-equiv='refresh' content='0;url=index.php'>";
+									return;
+								} else {
+									echo "Error".$sql."<br>".$conn->error;
+								}
+							} else if ($pass1 != $pass2) {
+								erroSenha();
+								echo "<p style='color:red'>CPF e senha inválidos.</p>";
 							}
-						} else if ($pass1 != $pass2) {
-							erroSenha();
-							echo "<p style='color:red'>CPF e senha inválidos.</p>";
-						} else {
+						}
+						if ($conn->query($sql) == FALSE) {
 							echo "Error".$sql."<br>".$conn->error;
 						}
 					}
 				}
 			?>
-
+		</pre>
 		</div>
 	</section>
 </body>
